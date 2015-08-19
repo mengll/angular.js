@@ -213,4 +213,8 @@ getScrollPosition()
 	$scope.gobottom = function(){
 		$ionicScollDelegate.scrollBottom(true);
 	}
+	//自定义更新事件
+	 $scope.goBotom = function(){
+    		$ionicScollDelegate.scrollBy(0,500,true);
+    	}
 }]);
