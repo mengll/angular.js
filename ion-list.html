@@ -1,0 +1,154 @@
+列表 : ion-list
+列表是常用的信息组织方式。在ionic中，使用ion-list指令声明列表 元素，使用ion-item指令声明成员元素：
+
+<ion-list>
+    <ion-item>...</ion-item>
+    <ion-item>...</ion-item>
+    ...
+</ion-list>
+ion-list指令提供以下属性用来定制列表的外观：
+
+type - 列表种类
+type属性是可选的，可用来设置列表的种类： list-inset | card。这两种列表 都产生内嵌的效果，区别在于card列表有边框的阴影效果。
+
+show-delete - 是否显示成员内的delete按钮
+show-delete属性是可选的。如果在成员内有delete按钮（ion-delete-button），使用这个 属性来通知列表是否显示元素删除按钮。允许的值为：true | false
+
+show-reorder - 是否显示成员内的reorder按钮
+show-reorder属性是可选的。如果在成员内有reorder按钮（ion-reorder-button），使用这个 属性来通知列表是否显示元素重排序按钮。允许的值为：true | false
+
+can-swipe - 是否支持滑动方式显示成员option按钮
+can-swipe属性是可选的。如果在成员内有option按钮（ion-option-button），使用这个 属性来允许或禁止通过向左滑动成员来打开option按钮。允许的值为：true | false ，默认为true。
+
+	<ion-content>
+		<ion-list>
+			<ion-item ng-repeat="item in items">
+			{{item}}
+			<ion-option-button class="button-calm icon ion-edit"></ion-option-button>
+			<ion-option-button class="button-energized icon ion-share"></ion-option-button>
+			</ion-item>
+		</ion-list>
+	</ion-content> 
+	
+	angular.module("ezApp",["ionic"])
+.controller("ezCtrl",function($scope){
+	$scope.items = [];
+	for(var i=0;i<10;i++) 
+		$scope.items.push(["item ",i+1].join(""));
+});
+
+
+ion-item : 成员按钮
+ion-item有三种预定义的按钮：
+
+ion-option-button - 选项按钮。
+一个ion-item内可以包含多个选项按钮。选项按钮是隐藏的，需要用户向左 滑动成员，以显示选项按钮。可以使用ion-tabs的can-swipe属性允许或禁止 滑动开启选项按钮。
+
+使用ng-click指令来挂接点击事件监听函数，其原型如下：
+
+var optionListener = function(item){...}
+ionic在捕捉到用户的点击事件时，将调用此函数，并传入当前的item对象。
+
+ion-delete-button - 删除按钮
+一个ion-item内最多有一个删除按钮。删除按钮在显示时总是位于成员的最 左端。可以使用ion-tabs的show-delete属性显示或隐藏删除按钮
+
+使用ng-click指令来挂接点击事件监听函数，其原型如下：
+
+var deleteListener = function(item){...}
+ionic在捕捉到用户的点击事件时，将调用此函数，并传入当前的item对象。
+
+ion-reorder-button - 重排按钮
+一个ion-item内最多有一个重排按钮。重排按钮在显示时总是位于成员的最 右端。可以使用ion-tabs的show-reorder属性显示或隐藏重排按钮
+
+使用on-reorder属性来挂接重排事件监听函数，其原型如下：
+
+var reorderListener = function(item,$fromIndex,$toIndex){...}
+ionic在捕捉到用户的重排事件时，将调用此函数，并传入当前的item对象、原 序号及目标序号。
+
+	<ion-content>
+		<ion-list show-delete="flag.showDelete" show-reorder="flag.showReorder">
+			<ion-item ng-repeat="item in items">
+				{{item}}!
+				<ion-option-button class="button-calm">...</ion-option-button>
+				<ion-delete-button class="ion-minus-circled" ng-click="delete_item(item)"></ion-delete-button>
+				<ion-reorder-button class="ion-navicon" on-reorder="move_item(item,$fromIndex,$toIndex)"></ion-reorder-button>
+			</ion-item>
+		</ion-list>
+	</ion-content>
+	
+	angular.module("ezApp",["ionic"])
+.controller("ezCtrl",function($scope){
+	$scope.flag={showDelete:false,showReorder:false};
+	$scope.items=["Chinese","English","German","Italian","Janapese","Sweden","Koeran","Russian","French"];
+	$scope.delete_item=function(item){
+		var idx = $scope.items.indexOf(item);
+		$scope.items.splice(idx,1);
+	};
+	$scope.move_item = function(item, fromIndex, toIndex) {
+		$scope.items.splice(fromIndex, 1);
+		$scope.items.splice(toIndex, 0, item);
+	};
+});
+
+
+collection-repeat : 高性能的ng-repeat
+collection-repeat指令和ng-repeat指令类似，但是更适用于大数据量 的列表数据，这是因为，它只将处于可视区域的数据渲染到DOM上：
+
+<any collection-repeat="...">...</any>
+collection-repeat指令接受一个枚举表达式，同时可以附加以下的属性：
+
+item-width - 可选。声明重复元素的宽度
+item-height - 可选。声明重复元素的高度
+item-render-buffer - 可选。需要载入渲染缓冲区的可视数据前后的数量。默认为3
+force-refresh-images - 可选。滚动时是否强制刷新图像。允许值：true | false
+
+	<ion-content>
+		<ion-list>
+			<ion-item collection-repeat="item in items">
+			{{item}}
+			<ion-option-button class="button-positive">...</ion-option-button>
+			</ion-item>
+		</ion-list>
+	</ion-content>
+	
+	angular.module("ezApp",["ionic"])
+.controller("ezCtrl",function($scope){
+	$scope.items = [];
+	for(var i=0;i<5000;i++) 
+		$scope.items.push(["item",i+1].join(""));
+});
+
+脚本接口 : $ionicListDelegate
+如果需要从脚本中控制列表元素，可以使用$ionicListDelegate服务：
+
+showReorder([showReorder]) - 显示/关闭排序按钮
+showReorder的允许值为：true | false。可以使用一个作用域上的表达式
+
+showDelete([showDelete]) - 显示/关闭删除按钮
+showDelete的允许值为： true | false。可以使用一个作用域上的表达式
+
+canSwipeItems([canSwipeItems]) - 是否允许通过滑动方式来显示成员选项按钮
+canSwipeItems的允许值为：true | false。可以使用一个作用域上的表达式
+
+closeOptionButtons() - 关闭所有选项按钮
+
+	<ion-content>
+		<ion-list>
+			<ion-item ng-repeat="item in items">
+				{{item}}!
+				<ion-option-button class="button-calm icon ion-share"></ion-option-button>
+			</ion-item>
+		</ion-list>
+	</ion-content>
+	
+	angular.module("ezApp",["ionic"])
+.controller("ezCtrl",["$scope","$ionicListDelegate",function($scope,$ionicListDelegate){
+	$scope.items = ["Chinese","English","Russian","Japanese"];
+	var flag = false;
+	$scope.close = function(){
+		$ionicListDelegate.closeOptionButtons();
+	};
+}]);
+
+
+
