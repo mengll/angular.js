@@ -1,0 +1,88 @@
+幻灯片 : ion-slide-box
+幻灯片也是一种常见的UI表现方式，它从一组元素中选择一个投射到屏幕可视区域，用户 可以通过滑动方式（向左或向右）进行切换：
+在ionic中，使用ion-slide-box指令声明幻灯片元素，使用ion-slide 指令声明幻灯页元素：
+
+<ion-slide-box>
+    <ion-slide>...</ion-slide>
+    <ion-slide>...</ion-slide>
+    ...
+</ion-slide-box>
+
+ion-slide-box : 定制播放行为
+指令ion-slide-box有一些可选的属性可以定制其播放行为：
+
+does-continue - 是否循环切换
+你可能注意到，上一节的示例中，开头的幻灯页只能向左滑动，最后的幻灯页只能向右滑动。 将does-continue属性值设为true，就可以让幻灯页组首尾连接起来，循环切换。
+
+auto-play - 是否自动播放
+通过将auto-play属性设置为true，可以让幻灯页自动切换。切换的间隔默认是4000ms，可以 通过属性slide-interval进行调整。
+
+slide-interval - 自动播放的间隔时间，默认为4000ms
+show-pager - 是否显示分页器
+分页器用来指示幻灯页的选中状态，位于幻灯片的底部。 允许值为：true | false
+
+ion-slide-box : 事件及变量
+指令ion-slide-box提供了可选的用于事件监听的属性：
+
+pager-click - 分页器点击事件
+pager-click属性应当设置为一个当前作用域上的函数调用表达式，这个函数将被 传入被点击的分页按钮对应的幻灯页序号：index
+
+on-slide-changed - 幻灯页切换事件
+on-slide-changed属性应当设置为一个当前作用域上的函数调用表达式，这个函数 将被传入当前幻灯页的序号：$index
+
+active-slide - 当前幻灯页索引
+active-slide属性应当设置为一个当前作用域上的变量，当幻灯片切换时，这个变 量同步的反应当前的幻灯页索引号
+
+	<ion-slide-box does-continue="true" show-pager="true" auto-play="true" active-slide="index" pager-click="go(index)">
+		<ion-slide>
+			<img src="img/s-1.jpg">
+		</ion-slide>
+		<ion-slide>
+			<img src="img/s-2.jpg">
+		</ion-slide>
+		<ion-slide>
+			<img src="img/s-3.jpg">
+		</ion-slide>
+	</ion-slide-box>  
+	
+	angular.module("ezApp",["ionic"])
+.controller("ezCtrl",function($scope,$ionicSlideBoxDelegate){
+	$scope.index = 0;
+	$scope.go = function(index){
+		$ionicSlideBoxDelegate.slide(index);
+	}
+});
+
+
+脚本接口 : $ionicSlideBoxDelegate
+可以使用服务$ionicSlideBoxDelegate在脚本中操作幻灯片对象：
+
+update() - 重绘幻灯片
+有时，比如当容器尺寸发生变化时，需要调用update()方法重绘幻灯片。
+
+slide(to[,speed]) - 切换到指定幻灯页
+参数to表示切换的目标幻灯页序号，参数speed是可选的，表示以毫秒 为单位的切换时间
+
+enableSlide([shouldEnable]) - 幻灯片使能
+参数shouldEnable的允许值为：true | false 。
+
+previous() - 切换到前一张幻灯页
+next() - 切换到后一张幻灯页
+currentIndex() - 获得当前幻灯页的序号
+slideCount() - 获得全部幻灯页的数量
+
+
+angular.module("ezApp",["ionic"])
+.controller("ezCtrl",function($scope,$ionicSlideBoxDelegate){
+	$scope.go_next = function(index){
+		$ionicSlideBoxDelegate.next();
+	};
+})
+
+
+	<ion-header-bar class="bar-positive">
+		<a class="button" ng-click="go_next();">next!</a>
+		<h1 class="title">$ionicSlideBoxDelegate</h1>
+	</ion-header-bar>
+	
+	
